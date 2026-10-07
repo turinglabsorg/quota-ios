@@ -179,7 +179,8 @@ private struct SmallView: View {
     let mode: DisplayMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        // Spread the rows over the whole widget so free space never piles up above "Updated".
+        VStack(alignment: .leading, spacing: 0) {
             ForEach(rows) { row in
                 HStack(spacing: 5) {
                     ProviderGlyph(provider: row.account.provider)
@@ -193,8 +194,8 @@ private struct SmallView: View {
                         ForEach(row.bars) { BarLine(bar: $0, mode: mode, valueSize: 10, valueWidth: 27) }
                     }
                 }
+                Spacer(minLength: 4)
             }
-            Spacer(minLength: 0)
             UpdatedLabel(payload: payload, now: now)
         }
     }
@@ -207,20 +208,19 @@ private struct MediumView: View {
     let mode: DisplayMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Grid(horizontalSpacing: 14, verticalSpacing: 10) {
-                ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
-                    GridRow(alignment: .top) {
-                        tile(rows[index])
-                        if index + 1 < rows.count {
-                            tile(rows[index + 1])
-                        } else {
-                            Color.clear
-                        }
+        // Spread the tile rows over the whole widget so free space never piles up above "Updated".
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
+                HStack(alignment: .top, spacing: 14) {
+                    tile(rows[index])
+                    if index + 1 < rows.count {
+                        tile(rows[index + 1])
+                    } else {
+                        Color.clear.frame(maxWidth: .infinity, maxHeight: 0)
                     }
                 }
+                Spacer(minLength: 6)
             }
-            Spacer(minLength: 0)
             UpdatedLabel(payload: payload, now: now)
         }
     }

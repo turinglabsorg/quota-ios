@@ -19,6 +19,7 @@ The iOS surfaces follow the macOS design system in `quota/DESIGN.md`: same level
 - Bars follow the Mac menu bar (`ProviderSnapshot.menuBarWindows`): when an account reports a 5-hour session and a weekly (or monthly) window, it gets two stacked bars, session above, each with its own value and level color; otherwise one bar for the window closest to its limit.
 - **Small**: up to four rows: glyph (11 pt), short provider name (`.caption2` semibold, 40 pt column), then the stacked bars (4 pt) each followed by its value (10 pt bold); "Updated …" in 9 pt at the bottom, orange when older than 30 minutes.
 - **Medium**: 2 × 2 tiles: glyph + short name + `↻` countdown of the window closest to its limit (10 pt, secondary), then the stacked bars with 12 pt values.
+- Home Screen rows (or tile rows) are spread evenly over the widget height with a spacer after each, so free space never collects above "Updated".
 - **Lock Screen**: circular gauge of the account closest to its limit (glyph + value); rectangular 2 × 2 of glyph + values (`55%/85%` when stacked); inline "Claude 55%/85% · Codex 88% · …".
 - `Provider.shortName` keeps names short ("Ollama").
 - States: not paired ("Open Quota to pair"), unreachable with no cache ("Can't reach the Quota server.").
