@@ -60,11 +60,20 @@ struct UsageBar: View {
 }
 
 extension AccountUsage {
-    /// The account-wide window the menu bar would show, with its remaining percent at `now`.
+    /// The account-wide window closest to its limit, with its remaining percent at `now`.
     func headline(at now: Date) -> (window: UsageWindow, remaining: Int)? {
-        let snapshot = ProviderSnapshot(provider: provider, plan: plan, account: email, windows: usageWindows, fetchedAt: fetchedAt ?? now)
-        guard let window = snapshot.tightestWindow(at: now) else { return nil }
+        guard let window = snapshot(at: now).tightestWindow(at: now) else { return nil }
         return (window, window.remainingPercent(at: now))
+    }
+
+    /// The bars the widgets draw, like the Mac menu bar: the 5-hour session above the weekly (or monthly)
+    /// window when the account reports both, otherwise the window closest to its limit.
+    func barWindows(at now: Date) -> [UsageWindow] {
+        snapshot(at: now).menuBarWindows(at: now)
+    }
+
+    private func snapshot(at now: Date) -> ProviderSnapshot {
+        ProviderSnapshot(provider: provider, plan: plan, account: email, windows: usageWindows, fetchedAt: fetchedAt ?? now)
     }
 }
 

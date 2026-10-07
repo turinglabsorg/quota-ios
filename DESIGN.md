@@ -16,8 +16,9 @@ The iOS surfaces follow the macOS design system in `quota/DESIGN.md`: same level
 
 ## Widgets
 
-- **Small**: up to four rows: glyph (11 pt), short provider name (`.caption2` semibold), value (`.caption` bold), 4 pt bar; "Updated …" in 9 pt at the bottom, orange when older than 30 minutes.
-- **Medium**: 2 × 2 grid of the same tiles with the reset countdown (or the window label) under the bar.
-- **Lock Screen**: circular gauge of the account closest to its limit (glyph + value); rectangular 2 × 2 of glyph + value; inline "Claude 72% · Codex 63% · …".
-- Each row shows the account-wide window closest to its limit (`ProviderSnapshot.tightestWindow`); `Provider.shortName` keeps names short ("Ollama").
+- Bars follow the Mac menu bar (`ProviderSnapshot.menuBarWindows`): when an account reports a 5-hour session and a weekly (or monthly) window, it gets two stacked bars, session above, each with its own value and level color; otherwise one bar for the window closest to its limit.
+- **Small**: up to four rows: glyph (11 pt), short provider name (`.caption2` semibold, 40 pt column), then the stacked bars (4 pt) each followed by its value (10 pt bold); "Updated …" in 9 pt at the bottom, orange when older than 30 minutes.
+- **Medium**: 2 × 2 tiles: glyph + short name + `↻` countdown of the window closest to its limit (10 pt, secondary), then the stacked bars with 12 pt values.
+- **Lock Screen**: circular gauge of the account closest to its limit (glyph + value); rectangular 2 × 2 of glyph + values (`55%/85%` when stacked); inline "Claude 55%/85% · Codex 88% · …".
+- `Provider.shortName` keeps names short ("Ollama").
 - States: not paired ("Open Quota to pair"), unreachable with no cache ("Can't reach the Quota server.").
