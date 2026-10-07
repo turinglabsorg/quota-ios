@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Toolchain
+        run: xcodebuild -version
+      - name: XcodeGen
+        run: brew install xcodegen
+      - name: Build for the simulator
+        run: scripts/build-ios.sh

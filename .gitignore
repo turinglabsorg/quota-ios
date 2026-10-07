@@ -1,0 +1,8 @@
+.DS_Store
+build/
+*.xcodeproj/
+xcuserdata/
+App/Info.plist
+App/Quota.entitlements
+Widgets/Info.plist
+Widgets/QuotaWidgets.entitlements

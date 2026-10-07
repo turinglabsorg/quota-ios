@@ -1,0 +1,84 @@
+name: QuotaiOS
+options:
+  bundleIdPrefix: com.turinglabs
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ${QUOTA_TEAM_ID}
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    LOCALIZATION_PREFERS_STRING_CATALOGS: NO
+    # Change these (and the bundle identifiers below) to build with your own team.
+    QUOTA_APP_GROUP: group.com.turinglabs.quota
+
+# Shared with the macOS app through the `quota` submodule: models, formatting, the server payload, glyphs and translations.
+targetTemplates:
+  QuotaShared:
+    sources:
+      - path: Shared
+      - path: quota/Sources/QuotaCore/Models.swift
+      - path: quota/Sources/QuotaCore/Formatting.swift
+      - path: quota/Sources/QuotaCore/JSON.swift
+      - path: quota/Sources/QuotaCore/UsagePayload.swift
+      - path: quota/Sources/Quota/ProviderGlyph.swift
+      - path: quota/Resources/en.lproj
+        buildPhase: resources
+      - path: quota/Resources/it.lproj
+        buildPhase: resources
+
+targets:
+  Quota:
+    type: application
+    platform: iOS
+    templates: [QuotaShared]
+    scheme: {}
+    sources:
+      - path: App
+      - path: Resources/Assets.xcassets
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Quota
+        CFBundleLocalizations: [en, it]
+        QuotaAppGroup: $(QUOTA_APP_GROUP)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: App/Quota.entitlements
+      properties:
+        com.apple.security.application-groups: [$(QUOTA_APP_GROUP)]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.turinglabs.quota.ios
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - target: QuotaWidgets
+
+  QuotaWidgets:
+    type: app-extension
+    platform: iOS
+    templates: [QuotaShared]
+    sources:
+      - path: Widgets
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Quota
+        CFBundleLocalizations: [en, it]
+        QuotaAppGroup: $(QUOTA_APP_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widgets/QuotaWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [$(QUOTA_APP_GROUP)]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.turinglabs.quota.ios.widgets
