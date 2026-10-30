@@ -4,7 +4,7 @@ How much of your **Claude**, **Codex**, **Grok**, **Ollama Cloud** and **Muse Co
 
 <p>
   <img alt="Quota iOS app listing usage for Claude, Codex, Grok and Ollama Cloud" src="docs/screenshots/app.png" width="300">
-  <img alt="Quota widgets on the Home Screen" src="docs/screenshots/home.png" width="300">
+  <img alt="Quota medium and small widgets on the Home Screen with Claude, Codex, Grok, Ollama Cloud and Muse Code" src="docs/screenshots/home.png" width="300">
 </p>
 
 The iOS companion of [Quota](https://github.com/turinglabsorg/quota), the macOS menu bar app ([Quotax](https://github.com/turinglabsorg/quotax) is the Linux version).
@@ -14,7 +14,7 @@ The iOS companion of [Quota](https://github.com/turinglabsorg/quota), the macOS 
 Your phone has no CLIs to read limits from, so an always-on Mac does it: [`quota-server`](https://github.com/turinglabsorg/quota#iphone-app-and-widgets) reads the accounts linked on that Mac every 5 minutes and publishes them over HTTPS. The app and the widgets fetch those numbers with a device token. The phone never receives credentials for Claude, Codex, Grok, Ollama or Muse Code.
 
 - **App**: every account with its windows (5-hour session, weekly, per-model weekly, monthly), bars and reset countdowns. Pull to refresh.
-- **Widgets**: small and medium on the Home Screen; circular (the account closest to its limit), rectangular and inline on the Lock Screen. The 5-hour session and the weekly window appear as two stacked bars, like the Mac menu bar. They refresh themselves every 15 minutes and keep showing the last numbers, with their age, when the server is unreachable.
+- **Widgets**: small and medium on the Home Screen; circular (the account closest to its limit), rectangular and inline on the Lock Screen. The 5-hour session and the weekly window appear as two stacked bars, like the Mac menu bar. Up to six accounts fit: with more than four the medium widget lays its tiles out three to a row. They refresh themselves every 15 minutes and keep showing the last numbers, with their age, when the server is unreachable.
 - **Pairing**: run `quota-server pair` on the Mac and enter the single-use 8-digit code in the app. The token lives in the Keychain, shared with the widgets.
 - **Languages**: English and Italian.
 
