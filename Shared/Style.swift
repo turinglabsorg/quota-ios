@@ -93,13 +93,21 @@ extension UsagePayload {
             account(.codex, plan: "Plus", [UsageWindow(kind: .weekly, usedPercent: 37, resetsAt: now.addingTimeInterval(5 * 86_400))]),
             account(.grok, plan: nil, [UsageWindow(kind: .weekly, usedPercent: 96, resetsAt: now.addingTimeInterval(9 * 3_600))]),
             account(.ollama, plan: "Max", [UsageWindow(kind: .monthly, usedPercent: 53, resetsAt: now.addingTimeInterval(13 * 86_400))]),
+            account(.musecode, plan: "High Usage", [
+                UsageWindow(kind: .session, usedPercent: 12, resetsAt: now.addingTimeInterval(4 * 3_600)),
+                UsageWindow(kind: .weekly, usedPercent: 41, resetsAt: now.addingTimeInterval(2 * 86_400)),
+            ]),
         ])
     }()
 }
 
 extension Provider {
-    /// Fits the narrow widget rows ("Ollama Cloud" does not).
+    /// Fits the narrow widget rows ("Ollama Cloud" and "Muse Code" do not).
     var shortName: String {
-        self == .ollama ? "Ollama" : displayName
+        switch self {
+        case .ollama: "Ollama"
+        case .musecode: "Muse"
+        default: displayName
+        }
     }
 }

@@ -70,7 +70,7 @@ struct UsageWidget: Widget {
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Quota")
-        .description("How much of your Claude, Codex, Grok and Ollama Cloud limits you have left.")
+        .description("How much of your Claude, Codex, Grok, Ollama Cloud and Muse Code limits you have left.")
         .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
 }
@@ -93,17 +93,18 @@ struct UsageWidgetView: View {
     @ViewBuilder
     private func content(_ payload: UsagePayload) -> some View {
         let rows = payload.accounts.compactMap { Row(account: $0, now: entry.date) }
+        let shown = Array(rows.prefix(Row.maxShown))
         switch family {
         case .accessoryCircular:
             CircularView(row: rows.min { $0.remaining < $1.remaining }, mode: entry.displayMode)
         case .accessoryRectangular:
-            RectangularView(rows: Array(rows.prefix(4)), mode: entry.displayMode)
+            RectangularView(rows: shown, mode: entry.displayMode)
         case .accessoryInline:
             Text(rows.map { "\($0.account.provider.shortName) \($0.values(entry.displayMode))" }.joined(separator: " · "))
         case .systemMedium:
-            MediumView(rows: Array(rows.prefix(4)), payload: payload, now: entry.date, mode: entry.displayMode)
+            MediumView(rows: shown, payload: payload, now: entry.date, mode: entry.displayMode)
         default:
-            SmallView(rows: Array(rows.prefix(4)), payload: payload, now: entry.date, mode: entry.displayMode)
+            SmallView(rows: shown, payload: payload, now: entry.date, mode: entry.displayMode)
         }
     }
 
@@ -129,6 +130,10 @@ struct Bar: Identifiable {
 }
 
 struct Row: Identifiable {
+    /// Home Screen and rectangular widgets show up to six accounts; past four the medium tiles go three to a row.
+    static let maxShown = 6
+    static let roomyCount = 4
+
     let account: AccountUsage
     /// Session above weekly (or monthly) when the account reports both, as in the Mac menu bar.
     let bars: [Bar]
@@ -146,6 +151,8 @@ struct Row: Identifiable {
 
     var id: UUID { account.id }
     var level: UsageLevel { UsageLevel(remainingPercent: remaining) }
+    /// Only the window closest to its limit, for rows too short for stacked bars.
+    var headlineBar: Bar { Bar(id: 0, window: window, remaining: remaining) }
 
     func values(_ mode: DisplayMode) -> String {
         bars.map { "\(mode.value(remaining: $0.remaining))%" }.joined(separator: "/")
@@ -179,6 +186,8 @@ private struct SmallView: View {
     let mode: DisplayMode
 
     var body: some View {
+        // Up to eight bar lines fit; past that each account keeps one bar (the window closest to its limit).
+        let dense = rows.reduce(0) { $0 + $1.bars.count } > 8
         // Spread the rows over the whole widget so free space never piles up above "Updated".
         VStack(alignment: .leading, spacing: 0) {
             ForEach(rows) { row in
@@ -191,10 +200,10 @@ private struct SmallView: View {
                         .lineLimit(1)
                         .frame(width: 40, alignment: .leading)
                     VStack(spacing: 2) {
-                        ForEach(row.bars) { BarLine(bar: $0, mode: mode, valueSize: 10, valueWidth: 27) }
+                        ForEach(dense ? [row.headlineBar] : row.bars) { BarLine(bar: $0, mode: mode, valueSize: 10, valueWidth: 27) }
                     }
                 }
-                Spacer(minLength: 4)
+                Spacer(minLength: dense ? 2 : 4)
             }
             UpdatedLabel(payload: payload, now: now)
         }
@@ -208,15 +217,18 @@ private struct MediumView: View {
     let mode: DisplayMode
 
     var body: some View {
+        // Past four accounts the tiles go three to a row, without the countdown, to keep two tile rows.
+        let columns = rows.count > Row.roomyCount ? 3 : 2
         // Spread the tile rows over the whole widget so free space never piles up above "Updated".
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(stride(from: 0, to: rows.count, by: 2)), id: \.self) { index in
-                HStack(alignment: .top, spacing: 14) {
-                    tile(rows[index])
-                    if index + 1 < rows.count {
-                        tile(rows[index + 1])
-                    } else {
-                        Color.clear.frame(maxWidth: .infinity, maxHeight: 0)
+            ForEach(Array(stride(from: 0, to: rows.count, by: columns)), id: \.self) { index in
+                HStack(alignment: .top, spacing: columns == 3 ? 10 : 14) {
+                    ForEach(index..<index + columns, id: \.self) { column in
+                        if column < rows.count {
+                            tile(rows[column], countdown: columns == 2)
+                        } else {
+                            Color.clear.frame(maxWidth: .infinity, maxHeight: 0)
+                        }
                     }
                 }
                 Spacer(minLength: 6)
@@ -225,7 +237,7 @@ private struct MediumView: View {
         }
     }
 
-    private func tile(_ row: Row) -> some View {
+    private func tile(_ row: Row, countdown: Bool) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 5) {
                 ProviderGlyph(provider: row.account.provider)
@@ -235,7 +247,7 @@ private struct MediumView: View {
                     .font(.caption2.weight(.semibold))
                     .lineLimit(1)
                 Spacer(minLength: 2)
-                if let resetsAt = row.window.resetsAt, !row.window.hasReset(at: now) {
+                if countdown, let resetsAt = row.window.resetsAt, !row.window.hasReset(at: now) {
                     Text("\(Image(systemName: "arrow.clockwise")) \(Formatting.countdown(to: resetsAt, from: now))")
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
