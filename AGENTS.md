@@ -23,6 +23,7 @@ iOS app (SwiftUI) and WidgetKit widgets that show the remaining subscription usa
 - `POST /v1/pair` with `{"code","name"}` → `{"token"}`; 401 invalid code, 410 expired code.
 - `GET /v1/usage` with `Authorization: Bearer <token>` → `UsagePayload` JSON; 401 means the device was revoked: unpair.
 - Skip window kinds this app does not know (`WindowUsage.window` returns nil); the server may be newer than the app.
+- Skip accounts of providers this app does not know (`UsagePayload.decode` drops them); the server may publish a newer provider.
 
 ## Rules
 

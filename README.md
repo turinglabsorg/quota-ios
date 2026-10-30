@@ -1,6 +1,6 @@
 # Quota iOS
 
-How much of your **Claude**, **Codex**, **Grok** and **Ollama Cloud** subscription limits you have left, on your iPhone: an app plus Home Screen and Lock Screen widgets.
+How much of your **Claude**, **Codex**, **Grok**, **Ollama Cloud** and **Muse Code** subscription limits you have left, on your iPhone: an app plus Home Screen and Lock Screen widgets.
 
 <p>
   <img alt="Quota iOS app listing usage for Claude, Codex, Grok and Ollama Cloud" src="docs/screenshots/app.png" width="300">
@@ -11,7 +11,7 @@ The iOS companion of [Quota](https://github.com/turinglabsorg/quota), the macOS 
 
 ## How it works
 
-Your phone has no CLIs to read limits from, so an always-on Mac does it: [`quota-server`](https://github.com/turinglabsorg/quota#iphone-app-and-widgets) reads the accounts linked on that Mac every 5 minutes and publishes them over HTTPS. The app and the widgets fetch those numbers with a device token. The phone never receives credentials for Claude, Codex, Grok or Ollama.
+Your phone has no CLIs to read limits from, so an always-on Mac does it: [`quota-server`](https://github.com/turinglabsorg/quota#iphone-app-and-widgets) reads the accounts linked on that Mac every 5 minutes and publishes them over HTTPS. The app and the widgets fetch those numbers with a device token. The phone never receives credentials for Claude, Codex, Grok, Ollama or Muse Code.
 
 - **App**: every account with its windows (5-hour session, weekly, per-model weekly, monthly), bars and reset countdowns. Pull to refresh.
 - **Widgets**: small and medium on the Home Screen; circular (the account closest to its limit), rectangular and inline on the Lock Screen. The 5-hour session and the weekly window appear as two stacked bars, like the Mac menu bar. They refresh themselves every 15 minutes and keep showing the last numbers, with their age, when the server is unreachable.
@@ -47,7 +47,7 @@ Contributor notes for humans and coding agents are in [`AGENTS.md`](AGENTS.md).
 
 ## Disclaimer
 
-Quota is an independent project and is not affiliated with, endorsed by or sponsored by Anthropic, OpenAI, xAI or Ollama. Claude, Codex, Grok and Ollama are trademarks of their respective owners.
+Quota is an independent project and is not affiliated with, endorsed by or sponsored by Anthropic, OpenAI, xAI, Ollama or Meta. Claude, Codex, Grok, Ollama and Muse are trademarks of their respective owners.
 
 ## License
 
